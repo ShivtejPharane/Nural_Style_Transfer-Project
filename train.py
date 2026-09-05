@@ -3,20 +3,22 @@ import torch
 from pathlib import Path
 from utils.utils import *
 from torch.utils.data import DataLoader
-
-
+from utils.model import *
+import torch.optim as optim
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--content_dir',type=str,default=r'E:\Project01\Nural_Style_Transfer-Project\content_data',help='Location of content dataset')
     parser.add_argument('--style_dir',type=str,default=r'E:\Project01\Nural_Style_Transfer-Project\style_data',help='Location of style Dataset')
-    parser.add_argument('--vgg',type=str,default=r'E:\Project01\Nural_Style_Transfer-Project\style_data',help='Location of the Pretrained VGG')
+    parser.add_argument('--vgg',type=str,default=r'E:\Project01\Nural_Style_Transfer-Project\vgg_normalised.pth',help='Location of the Pretrained VGG')
     parser.add_argument('--expriment',type=str,default='expriment1',help='Nmae of Expriment')
     parser.add_argument('--final_size',type=int,default=256,help='Size of Final image')
     parser.add_argument('--content_size',type=int,default=512,help='Size of the Content Image')
     parser.add_argument('--style_size',type=int,default=512,help='Size of the Style Image')
     parser.add_argument('--crop',action='store_true',help='Crop Image')
     parser.add_argument('--batch_size',type=int,default=4,help='Size of batches in dataloder')
+    parser.add_argument('--lr',type=float,default=1e-4,help='learning rate')
+    parser.add_argument('--lr_decay',type=float,default=5e-5,help='learning rate decay')
     return parser.parse_args()
 def main():
     args = parse_arguments()
@@ -44,11 +46,14 @@ def main():
     content_dataloader = DataLoader(content_dataset,batch_size=args.batch_size,shuffle=True,pin_memory=True,drop_last=True)
     style_dataloader = DataLoader(style_dataset,batch_size=args.batch_size,shuffle=True,pin_memory=True,drop_last=True)
 
-    print(f'before batches {len(content_dataset)} after batches {len(content_dataloader)}')
-    print(f'before batches {len(style_dataset)} after batches {len(style_dataloader)}')
+    encoder = VGGEncoder(args.vgg).to(device)
+    decoder = Decoder().to(device)
 
-    for batch in content_dataloader:
-        print(batch.shape)
+    optimizer = optim.Adam(decoder.parameters(),lr=args.lr)
+    scheduler = optim.lr_scheduler.LambdaLR(
+        optimizer=optimizer,
+        lr_lambda=lambda epoch: 1.0/(1.0 + args.lr_decay * epoch)
+    )
 
     
 if __name__=='__main__':
