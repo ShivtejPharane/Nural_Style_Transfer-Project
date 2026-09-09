@@ -58,6 +58,126 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 @media(max-width:767.98px){.header-section{padding-top:7rem}.header-section h1{font-size:2.5rem}.preview-image{height:250px}.examples-section .example-flow{flex-direction:column}.examples-section .example-arrow{transform:rotate(90deg)}.examples-section .example-output,.examples-section .example-inputs{width:100%}}
 
 </style>
+
+<style>
+:root{
+    --bg:#ffffff;
+    --panel:#ffffff;
+    --border:#e5e7eb;
+    --text:#111827;
+    --muted:#6b7280;
+    --primary:#0077b6;
+    --secondary:#00b4d8;
+}
+body{
+    background:#ffffff !important;
+    color:#111827 !important;
+}
+body:before{
+    display:none !important;
+}
+#neuralCanvas,
+.scanlines,
+.orb{
+    display:none !important;
+}
+.navbar{
+    background:#ffffff !important;
+    border-bottom:1px solid #e5e7eb;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+}
+.navbar-brand{
+    background:linear-gradient(90deg,#0077b6,#00b4d8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.nav-link{
+    color:#374151 !important;
+}
+.nav-link:hover{
+    color:#0077b6 !important;
+}
+.header-section .lead{
+    color:#4b5563 !important;
+}
+.card{
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+}
+.card:hover{
+    border-color:#bae6fd;
+    box-shadow:0 16px 40px rgba(0,0,0,.10);
+}
+.card-header{
+    background:#f8fafc;
+    border-bottom:1px solid #e5e7eb;
+    color:#111827;
+}
+.preview-image{
+    background:#f8fafc;
+    border-color:#cbd5e1;
+    color:#64748b;
+}
+.form-control{
+    background:#ffffff;
+    border-color:#d1d5db;
+    color:#111827;
+}
+.form-control:focus{
+    background:#ffffff;
+    color:#111827;
+}
+.form-control::file-selector-button{
+    background:#f1f5f9;
+    color:#1f2937;
+}
+#alphaRange{
+    background:#e2e8f0;
+}
+.faq-section .accordion-item{
+    background:#ffffff;
+    border-color:#e5e7eb;
+}
+.faq-section .accordion-button{
+    background:#f8fafc;
+    color:#1f2937;
+}
+.faq-section .accordion-button:not(.collapsed){
+    background:#eff6ff;
+    color:#0077b6;
+}
+.faq-section .accordion-body{
+    color:#6b7280;
+}
+.footer-section{
+    background:#f8fafc;
+    border-top:1px solid #e5e7eb;
+    color:#6b7280;
+}
+.footer-section h5{
+    color:#111827;
+}
+.footer-link{
+    color:#6b7280;
+}
+.footer-link:hover{
+    color:#0077b6;
+}
+.social-icon{
+    background:#ffffff;
+    border-color:#d1d5db;
+    color:#374151;
+}
+.social-icon:hover{
+    background:#0077b6;
+    color:#ffffff;
+}
+.loader-overlay{
+    background:rgba(255,255,255,.94);
+}
+</style>
+
 </head>
 <body>
 
@@ -173,54 +293,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;bac
     {% endif %}
 </div>
 
-<section class="container examples-section fade-in-up">
-    <div class="card">
-        <div class="card-header text-center py-3">Examples</div>
-        <div class="card-body">
-            <p class="text-center text-muted mb-4">Each example shows the content image, the style below it, and the final output beside them.</p>
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="example-flow">
-                        <div class="example-inputs">
-                            <div>
-                                <div class="example-role text-center">Content Image</div>
-                                <img src="{{ url_for('send_image', filename='brad_pitt.jpg') }}" alt="Brad Pitt Content" class="example-image">
-                            </div>
-                            <div>
-                                <div class="example-role text-center">Style Image</div>
-                                <img src="{{ url_for('send_image', filename='sketch.png') }}" alt="Sketch Style" class="example-image">
-                            </div>
-                        </div>
-                        <div class="example-arrow">-&gt;</div>
-                        <div class="example-output">
-                            <div class="example-role text-center">Output</div>
-                            <img src="{{ url_for('send_image', filename='stylized_brad_pitt.jpg') }}" alt="Brad Pitt Sketch Result" class="example-image">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="example-flow">
-                        <div class="example-inputs">
-                            <div>
-                                <div class="example-role text-center">Content Image</div>
-                                <img src="{{ url_for('send_image', filename='brad_pitt.jpg') }}" alt="Brad Pitt Content" class="example-image">
-                            </div>
-                            <div>
-                                <div class="example-role text-center">Style Image</div>
-                                <img src="{{ url_for('send_image', filename='picasso_seated_nude_hr.jpg') }}" alt="Picasso Seated Nude Style" class="example-image">
-                            </div>
-                        </div>
-                        <div class="example-arrow">-&gt;</div>
-                        <div class="example-output">
-                            <div class="example-role text-center">Output</div>
-                            <img src="{{ url_for('send_image', filename='stylized_brad_pitt (1).jpg') }}" alt="Brad Pitt Picasso Result" class="example-image">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <section class="container faq-section fade-in-up">
     <div class="card">
