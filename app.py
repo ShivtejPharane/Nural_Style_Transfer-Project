@@ -108,9 +108,15 @@ print("=" * 60)
 
 VGG_PATH = "vgg_normalised.pth"
 
-DECODER_PATH = (
-    r"E:\Project01\Nural_Style_Transfer-Project"
-    r"\expriment\BigData01\decoder_1000.pth"
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+decoder_path = os.path.join(
+    BASE_DIR,
+    "expriment",
+    "BigData01",
+    "decoder_1000.pth"
 )
 
 
@@ -130,10 +136,7 @@ print("Loading Decoder...")
 decoder = Decoder().to(device)
 
 decoder.load_state_dict(
-    torch.load(
-        DECODER_PATH,
-        map_location=device
-    )
+    torch.load(decoder_path, map_location=device)
 )
 
 print("Decoder loaded successfully.")
