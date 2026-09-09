@@ -105,17 +105,17 @@ print("=" * 60)
 # ============================================================
 # Model Paths
 # ============================================================
-
-VGG_PATH = "vgg_normalised.pth"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+VGG_PATH = os.path.join(
+    BASE_DIR,
+    "vgg_normalised.pth"
+)
 
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 decoder_path = os.path.join(
     BASE_DIR,
-    "expriment",
-    "BigData01",
     "decoder_1000.pth"
 )
 
