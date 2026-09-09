@@ -5,6 +5,10 @@ from utils.utils import *
 from torch.utils.data import DataLoader
 from utils.model import *
 import torch.optim as optim
+from tqdm import tqdm
+
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
@@ -19,6 +23,10 @@ def parse_arguments():
     parser.add_argument('--batch_size',type=int,default=4,help='Size of batches in dataloder')
     parser.add_argument('--lr',type=float,default=1e-4,help='learning rate')
     parser.add_argument('--lr_decay',type=float,default=5e-5,help='learning rate decay')
+    parser.add_argument('--epochs',type=int,default=1,help='Number of epochs')
+    parser.add_argument('--content_weight',type=float,default=1.0,help='Content Weight')
+    parser.add_argument('--style_weight',type=float,default=1.0,help='Style weight')
+    parser.add_argument('--log_interval',type=int,default=1,help="Log interval")
     return parser.parse_args()
 def main():
     args = parse_arguments()
@@ -55,6 +63,63 @@ def main():
         lr_lambda=lambda epoch: 1.0/(1.0 + args.lr_decay * epoch)
     )
 
+    print("Training...")
+
+    mse_loss = torch.nn.MSELoss()
+
+    encoder.eval()
+
+    running_loss = 0
+    running_closs = 0
+    running_sloss = 0
+    for epoch in range(args.epochs):
+        progress_bar = tqdm(zip(content_dataloader,style_dataloader),
+                            total=min(len(content_dataloader),len(style_dataloader)))
+        for content_batch,style_batch in progress_bar:
+            content_batch = content_batch.to(device)
+            style_batch = style_batch.to(device)
+
+            c_feats = encoder(content_batch)
+            s_feats = encoder(style_batch)
+
+            t = adaptive_instance_normalization(c_feats[-1],s_feats[-1])
+
+            g = decoder(t)
+
+            g_feats = encoder(g)
+
+            loss_c = mse_loss(g_feats[-1],t)*args.content_weight
+
+            loss_s = 0
+            for g_f,s_f in zip(g_feats,s_feats):
+                g_mean,g_std = calc_mean_std(g_f)
+                s_mean,s_std = calc_mean_std(s_f)
+                loss_s +=mse_loss(g_mean,s_mean) + mse_loss(g_std,s_std)
+
+            loss_s = loss_s*args.style_weight
+
+            loss = loss_c+loss_s
+
+            optimizer.zero_grad()
+
+            loss.backward()
+
+            optimizer.step()
+
+            progress_bar.set_description(f'LOSS :{loss.item():.4f} content loss :{loss_c.item():.4f} style loss : {loss_s.item():.4f}')
+
+            running_loss += loss.item()
+            running_closs += loss_c.item()
+            running_sloss += loss_s.item()
+
+        scheduler.step()
+
+        running_loss /= len(content_dataloader) 
+        running_closs /= len(content_dataloader)
+        running_sloss /= len(content_dataloader)
+
+        if (epoch+1) % args.log_interval ==0:
+            tqdm.write(f'Iter {epoch+1} : loss {running_loss:.4f} ,content_loss {running_closs:.4f},style loss {running_sloss:.4f}')
     
 if __name__=='__main__':
     main()

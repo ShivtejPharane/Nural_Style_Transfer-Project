@@ -4,7 +4,7 @@ import torch
 class VGGEncoder(nn.Module):
     def __init__(self,vgg_path):
         super(VGGEncoder,self).__init__() 
-        self.vgg = nn.Module(
+        self.vgg = nn.Sequential(
             nn.Conv2d(3, 3, (1, 1)),
             nn.ReflectionPad2d((1, 1, 1, 1)),
             nn.Conv2d(3, 64, (3, 3)),
@@ -115,4 +115,4 @@ class Decoder(nn.Module):
             nn.Conv2d(64, 3, (3, 3)), 
         )
     def forward(self,input):
-        return self.decoder(input)
+        return self.net(input)
